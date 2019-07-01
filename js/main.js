@@ -1,6 +1,6 @@
 var addButton = document.getElementsByClassName('note-add')[0]
-var noteId = 0;
-var maxZIndex = 1;
+var noteId;
+var maxZIndex;
 var movingNote;
 
 function createNote(noteStatus) {
@@ -14,6 +14,10 @@ function createNote(noteStatus) {
                      '</div>';
     document.body.appendChild(note);
     setNoteHandlers(note);
+    note.getElementsByTagName('textarea')[0].value = noteStatus.text;
+    note.style.left = noteStatus.X;
+    note.style.top = noteStatus.Y;
+    note.style.zIndex = noteStatus.Z;
     return note;
 };
 
@@ -22,7 +26,7 @@ function setNoteHandlers(note) {
         if (event.target.className === 'note-move-button') {
             movingNote = note;
         };
-        if (note.style.zIndex < maxZIndex) {
+        if (note.style.zIndex <= maxZIndex) {
             note.style.zIndex = maxZIndex++;
         };
     });
@@ -32,7 +36,7 @@ function setNoteHandlers(note) {
         document.body.removeChild(note);
         var noteId = note.getAttribute('data-note-id');
         localStorageRemoveNote(noteId);
-        event.stopPropagation();
+        // event.stopPropagation();
     });
 
     var textArea = note.getElementsByTagName('textarea')[0]
@@ -46,9 +50,9 @@ function getNoteStatus(noteElem) {
     var noteId = noteElem.getAttribute('data-note-id');
     var textArea = noteElem.getElementsByTagName('textarea')[0];
     var noteStatus = {};
-    noteStatus.id = noteId;
+    noteStatus.id = +noteId;
     noteStatus.text = textArea.value;
-    noteStatus.Z = noteElem.style.zIndex;
+    noteStatus.Z = +noteElem.style.zIndex;
     noteStatus.X = noteElem.style.left;
     noteStatus.Y = noteElem.style.top;
     return noteStatus;
@@ -86,6 +90,19 @@ function localStorageGetNotes() {
     };
 };
 
+function loadNotes() {
+    var notes = localStorageGetNotes();
+    notes.forEach(function(note) {
+        createNote(note);
+    });
+    maxZIndex = notes.reduce(function(accumulator, value) {
+                    return (accumulator < value.Z) ? value.Z : accumulator
+                }, 0);
+    noteId = notes.reduce(function(accumulator, value) {
+                return (accumulator < value.id) ? value.id : accumulator
+            }, 0);
+};
+
 document.addEventListener('mousemove', function(event) {
     if (movingNote) {
         document.body.style.overflow = 'hidden';
@@ -113,8 +130,10 @@ document.addEventListener('mouseup', function() {
     };
 });
 
+window.addEventListener('load', loadNotes);
+
 addButton.addEventListener('click', function() {
-    var note = createNote({id: noteId++});
+    var note = createNote({id: ++noteId, Z: ++maxZIndex});
     var noteStatus = getNoteStatus(note);
     localStorageSaveNote(noteStatus);
 });
