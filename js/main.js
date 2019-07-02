@@ -34,9 +34,8 @@ function setNoteHandlers(note) {
     var removeButton = note.getElementsByClassName('note-remove-button')[0]
     removeButton.addEventListener('click', function(event) {
         document.body.removeChild(note);
-        var noteId = note.getAttribute('data-note-id');
+        var noteId = +note.getAttribute('data-note-id');
         localStorageRemoveNote(noteId);
-        // event.stopPropagation();
     });
 
     var textArea = note.getElementsByTagName('textarea')[0]
@@ -76,8 +75,10 @@ function localStorageRemoveNote(noteId) {
     var index = notes.findIndex(function(elem) {
         return elem.id === noteId;
     });
-    notes.splice(index, 1);
-    localStorage.setItem('notes', JSON.stringify(notes));
+    if (index >= 0) {
+        notes.splice(index, 1);
+        localStorage.setItem('notes', JSON.stringify(notes));
+    };
 };
 
 function localStorageGetNotes() {
@@ -133,7 +134,7 @@ document.addEventListener('mouseup', function() {
 window.addEventListener('load', loadNotes);
 
 addButton.addEventListener('click', function() {
-    var note = createNote({id: ++noteId, Z: ++maxZIndex});
+    var note = createNote({id: ++noteId, Z: ++maxZIndex, text: ''});
     var noteStatus = getNoteStatus(note);
     localStorageSaveNote(noteStatus);
 });
