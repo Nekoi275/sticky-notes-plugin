@@ -4,7 +4,7 @@ function StickyNotes(addNoteButton, notesWorkspace) {
     var maxZIndex;
     var activeNote;
 
-    function createNote(noteStatus) {
+    createNote(noteStatus) {
         var note = document.createElement('div');
     
         note.classList.add('note');
@@ -39,7 +39,7 @@ function StickyNotes(addNoteButton, notesWorkspace) {
     
         var removeButton = note.getElementsByClassName('note-remove-button')[0]
         removeButton.addEventListener('click', function() {
-            document.body.removeChild(note);
+            notesWorkspace.removeChild(note);
             var noteId = +note.getAttribute('data-note-id');
             localStorageRemoveNote(noteId);
         });
@@ -104,7 +104,8 @@ function StickyNotes(addNoteButton, notesWorkspace) {
 
     document.addEventListener('mousemove', function(event) {
         if (activeNote) {
-            document.body.style.overflow = 'hidden';
+            document.body.style.cssText = 'overflow: hidden; -moz-user-select: none; -webkit-user-select: none; user-select: none';
+        
             if (event.pageX >= (document.documentElement.clientWidth - 30) ) {
                 activeNote.style.left = (document.documentElement.clientWidth - 30) + 'px';
             } else {
@@ -125,7 +126,7 @@ function StickyNotes(addNoteButton, notesWorkspace) {
             var noteStatus = getNoteStatus(activeNote);
             localStorageSaveNote(noteStatus);
             activeNote = null;
-            document.body.style.overflow = 'visible';
+            document.body.style.cssText = 'overflow: visible; -moz-user-select: auto; -webkit-user-select: auto; user-select: auto';
         };
     });
 
