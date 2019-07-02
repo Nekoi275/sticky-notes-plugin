@@ -22,7 +22,12 @@
         </div>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="js/sticky-notes-plugin.js"></script>
+    <script>
+        var addButton = document.getElementsByClassName('note-add')[0]
+        var workspace = document.body;
+        new StickyNotes(addButton, workspace);
+    </script>
 </body>
 </html>
 
