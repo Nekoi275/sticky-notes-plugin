@@ -1,11 +1,10 @@
-function StickyNotes(addNoteButton, notesWorkspace) {
-    var addButton = addNoteButton;
+function StickyNotes(addNoteButton, workspaceParams) {
     var noteId;
     var maxZIndex;
     var activeNote;
 
-    loadNotes();
-
+    init();
+    
     this.createNote = function(noteStatus) {
         if (!noteStatus.id) {
             noteStatus.id = ++noteId;
@@ -26,13 +25,13 @@ function StickyNotes(addNoteButton, notesWorkspace) {
     
         note.classList.add('note');
         note.setAttribute('data-note-id', noteStatus.id);
-        note.innerHTML = '<div class="note-move-button"></div>' +
-                         '<div class="note-remove-button"><span>&#128465;</span></div>' +
+        note.innerHTML = '<a class="note-move-button"></a>' +
+                         '<a class="note-remove-button"></a>' +
                          '<div class="note-textarea">' +
                            '<textarea></textarea>' +
                          '</div>';
     
-        notesWorkspace.appendChild(note);
+        document.body.appendChild(note);
         setNoteHandlers(note);
         note.getElementsByTagName('textarea')[0].value = noteStatus.text;
     
@@ -77,9 +76,9 @@ function StickyNotes(addNoteButton, notesWorkspace) {
     };
 
     function removeNote(noteId) {
-        var note = notesWorkspace.querySelector('[data-note-id="' + noteId + '"]');
+        var note = document.body.querySelector('[data-note-id="' + noteId + '"]');
         if (note) {
-            notesWorkspace.removeChild(note);
+            document.body.removeChild(note);
             localStorageRemoveNote(noteId);
         };
     };
@@ -127,45 +126,51 @@ function StickyNotes(addNoteButton, notesWorkspace) {
         }, 0);
     };
 
-    document.addEventListener('mousemove', function(event) {
-        if (activeNote) {
-            document.body.style.cssText = 'overflow: hidden;' +
-                                          '-moz-user-select: none;' +
-                                          ' -webkit-user-select: none;' + 
-                                          ' user-select: none';
+    function init() {
+        loadNotes();
 
-            if (event.clientX >= (document.documentElement.clientWidth - 30) ) {
-                activeNote.style.left = (document.documentElement.clientWidth - 30) + 'px';
-            } else {
-                activeNote.style.left = event.clientX + 'px';
+        document.addEventListener('mousemove', function(event) {
+            if (activeNote) {
+                document.body.style.cssText = 'overflow: hidden;' +
+                                            '-moz-user-select: none;' +
+                                            ' -webkit-user-select: none;' + 
+                                            ' user-select: none';
+
+                if (event.clientX >= (document.documentElement.clientWidth - 30) ) {
+                    activeNote.style.left = (document.documentElement.clientWidth - 30) + 'px';
+                } else {
+                    activeNote.style.left = event.clientX + 'px';
+                };
+
+                if (event.clientY >= (document.documentElement.clientHeight - 30) ) {
+                    activeNote.style.top = (document.documentElement.clientHeight - 30) + 'px';
+                } else if (event.clientY <= 0) {
+                    activeNote.style.top = 0 + 'px';
+                } else {
+                    activeNote.style.top = event.clientY + 'px';
+                };
             };
+        });
 
-            if (event.clientY >= (document.documentElement.clientHeight - 30) ) {
-                activeNote.style.top = (document.documentElement.clientHeight - 30) + 'px';
-            } else if (event.clientY <= 0) {
-                activeNote.style.top = 0 + 'px';
-            } else {
-                activeNote.style.top = event.clientY + 'px';
+        document.addEventListener('mouseup', function() {
+            if (activeNote) {
+                var noteStatus = getNoteStatus(activeNote);
+                localStorageSaveNote(noteStatus);
+                activeNote = null;
+                document.body.style.cssText = 'overflow: visible;' +
+                                            '-moz-user-select: auto;' +
+                                            ' -webkit-user-select: auto;' + 
+                                            ' user-select: auto';
             };
-        };
-    });
+        });
 
-    document.addEventListener('mouseup', function() {
-        if (activeNote) {
-            var noteStatus = getNoteStatus(activeNote);
+        if (addNoteButton) {
+            addNoteButton.addEventListener('click', function() {
+            var note = createNoteElement({id: ++noteId, Z: ++maxZIndex, text: ''});
+            var noteStatus = getNoteStatus(note);
             localStorageSaveNote(noteStatus);
-            activeNote = null;
-            document.body.style.cssText = 'overflow: visible;' +
-                                          '-moz-user-select: auto;' +
-                                          ' -webkit-user-select: auto;' + 
-                                          ' user-select: auto';
+            });
         };
-    });
-
-    addButton.addEventListener('click', function() {
-        var note = createNoteElement({id: ++noteId, Z: ++maxZIndex, text: ''});
-        var noteStatus = getNoteStatus(note);
-        localStorageSaveNote(noteStatus);
-    });
+    };
 }
 

@@ -1,5 +1,10 @@
 // out: ../css/sticky-notes.css, compress: false, sourceMap: false
 
+.notes-workspace {
+    position: absolute;
+    overflow: hidden;
+}
+
 .note {
     position: fixed;
     overflow: hidden;
@@ -26,13 +31,13 @@
   
     .note-remove-button {  
       position: absolute;
-      background-color: transparent;
       width: 30px;
       height: 30px;
-      font-size: 20pt;
-      left: 255px;
-      text-align: center;
+      left: 260px;
+      top: 5px;
       cursor: pointer;
+      background-image: url("../icons/garbage.png");
+      background-repeat: no-repeat;
     }
   
     .note-textarea {
