@@ -1,9 +1,10 @@
 .notes-workspace {
-  position: absolute;
+  position: relative;
   overflow: hidden;
+  background-color: #f7ccd7;
 }
 .note {
-  position: fixed;
+  position: absolute;
   overflow: hidden;
   background-color: #f3f3c2;
   width: 300px;

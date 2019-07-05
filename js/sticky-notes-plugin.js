@@ -26,10 +26,8 @@ function StickyNotes(addNoteButton, workspaceParams) {
         workspace.classList.add('notes-workspace');
         workspace.style.width = workspaceParams.width + 'px';
         workspace.style.height = workspaceParams.height + 'px';
-        workspace.style.left = workspaceParams.left + 'px';
-        workspace.style.top = workspaceParams.top + 'px';
         
-        document.body.appendChild(workspace);
+        workspaceParams.parent.appendChild(workspace);
     };
 
     function createNoteElement(noteStatus) {
@@ -148,26 +146,30 @@ function StickyNotes(addNoteButton, workspaceParams) {
             };
         };
         setWorkspace(workspaceParams);
-        loadNotes();
-        document.addEventListener('mousemove', function(event) {
-            if (activeNote) {
-                document.body.style.cssText = 'overflow: hidden;' +
-                                            '-moz-user-select: none;' +
-                                            ' -webkit-user-select: none;' + 
-                                            ' user-select: none';
 
-                if (event.clientX >= (document.documentElement.clientWidth - 30) ) {
-                    activeNote.style.left = (document.documentElement.clientWidth - 30) + 'px';
+        loadNotes();
+
+        workspace.addEventListener('mousemove', function(event) {
+            if (activeNote) {
+                event.stopPropagation();
+                document.body.style.cssText = '-moz-user-select: none;' +
+                                              ' -webkit-user-select: none;' + 
+                                              ' user-select: none';
+                
+                var noteCoords = activeNote.getBoundingClientRect();
+                if (event.clientX > (workspaceParams.width - noteCoords.width) ) {
+                    activeNote.style.left = (workspaceParams.width - noteCoords.width) + 'px';
                 } else {
                     activeNote.style.left = event.clientX + 'px';
                 };
 
-                if (event.clientY >= (document.documentElement.clientHeight - 30) ) {
-                    activeNote.style.top = (document.documentElement.clientHeight - 30) + 'px';
-                } else if (event.clientY <= 0) {
-                    activeNote.style.top = 0 + 'px';
+                if (event.clientY > (workspaceParams.height - noteCoords.height) ) {
+                    activeNote.style.top = (workspaceParams.height - noteCoords.height) + 'px';
                 } else {
                     activeNote.style.top = event.clientY + 'px';
+                };
+                if (event.clientY < 0) {
+                    activeNote.style.top = '0px';
                 };
             };
         });
@@ -177,10 +179,9 @@ function StickyNotes(addNoteButton, workspaceParams) {
                 var noteStatus = getNoteStatus(activeNote);
                 localStorageSaveNote(noteStatus);
                 activeNote = null;
-                document.body.style.cssText = 'overflow: visible;' +
-                                            '-moz-user-select: auto;' +
-                                            ' -webkit-user-select: auto;' + 
-                                            ' user-select: auto';
+                document.body.style.cssText = '-moz-user-select: auto;' +
+                                              ' -webkit-user-select: auto;' + 
+                                              ' user-select: auto';
             };
         });
 
