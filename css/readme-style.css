@@ -1,0 +1,32 @@
+h6 {
+  font-size: 20pt;
+  margin: 50px;
+}
+h4 {
+  font-size: 14pt;
+  margin-left: 50px;
+}
+h2 {
+  font-size: 12pt;
+  font-style: italic;
+  margin-left: 50px;
+}
+p {
+  margin-left: 50px;
+}
+table {
+  border: 1px solid darkgray;
+  border-collapse: collapse;
+  margin-left: 50px;
+}
+table thead tr th {
+  border: 1px solid darkgray;
+  padding: 20px;
+}
+table tbody tr {
+  border: 1px solid darkgray;
+}
+table tbody tr td {
+  border: 1px solid darkgray;
+  padding: 20px;
+}

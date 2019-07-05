@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Sticky notes plugin</title>
+    <link rel="stylesheet" type="text/css" href="css/readme-style.css"/>
+</head>
+<body>
+    <h6>Sticky notes plugin</h6>
+    <h4>new StickyNotes(addNoteButton, workspaceParams)</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter name</th>
+                <th>Default value</th>
+                <th>Values range</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>addNoteButton</td>
+                <td>undefined</td>
+                <td>HTML element</td>
+                <td>An element, which will get "click" event listener for adding new note</td>
+            </tr>
+            <tr>
+                <td>workspaceParams</td>
+                <td>{<br>
+                    width: document.documentElement.clientWidth,<br>
+                    height: document.documentElement.clientHeight,<br>
+                    removing: true,<br>
+                    parent: document.body,<br>
+                    notesLimit: 0<br>
+                    }
+                </td>
+                <td>object</td>
+                <td>An object with parameters used to create an area for working with notes</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>workspaceParams</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Key name</th>
+                <th>Default value</th>
+                <th>Values range</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>width</td>
+                <td>document.documentElement.clientWidth</td>
+                <td>number</td>
+                <td>Specifies width of the workspace</td>
+            </tr>
+            <tr>
+                <td>height</td>
+                <td>document.documentElement.clientHeight</td>
+                <td>number</td>
+                <td>Specifies height of the workspace</td>
+            </tr>
+            <tr>
+                <td>removing</td>
+                <td>true</td>
+                <td>bolean</td>
+                <td>Specifies if it is possible to remove notes from the workspace</td>
+            </tr>
+            <tr>
+                <td>parent</td>
+                <td>document.body</td>
+                <td>HTML element</td>
+                <td>Specifies parent element of the workspace</td>
+            </tr>
+            <tr>
+                <td>notesLimit</td>
+                <td>0</td>
+                <td>number</td>
+                <td>Specifies how many notes is it possible to add to the workspace, where 0 means no limit</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>StickyNotes.createNote(noteStatus)</h4>
+    <h2>A public function for creating notes without addNoteButton</h2>
+    <p>noteStatus is an object including the following:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Key name</th>
+                <th>Default value</th>
+                <th>Values range</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>id</td>
+                <td>max id + 1</td>
+                <td>unique number</td>
+                <td>Sets the value of note's 'data-note-id' attribute, by default - increments the max id value by one</td>
+            </tr>
+            <tr>
+                <td>Z</td>
+                <td>max z-index + 1</td>
+                <td>number</td>
+                <td>Sets z-index of the note, by default - increments the max z-index by one</td>
+            </tr>
+            <tr>
+                <td>X</td>
+                <td>0</td>
+                <td>number</td>
+                <td>Sets the note's style.left</td>
+            </tr>
+            <tr>
+                <td>Y</td>
+                <td>0</td>
+                <td>number</td>
+                <td>Sets the note's style.top</td>
+            </tr>
+            <tr>
+                <td>text</td>
+                <td>empty string</td>
+                <td>any</td>
+                <td>The text shown at the note's textarea</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
