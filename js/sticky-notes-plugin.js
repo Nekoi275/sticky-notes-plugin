@@ -161,22 +161,24 @@ function StickyNotes(addNoteButton, workspaceParams) {
             // document.body.style.cssText = '-moz-user-select: none;' +
             //                               ' -webkit-user-select: none;' + 
             //                               ' user-select: none';
-            console.log("X=" + event.clientX + " Y=" + event.clientY);
-            console.log("workspaceParams.width " + workspaceParams.width);
+            //console.log("X=" + event.clientX + " Y=" + event.clientY);
             var noteCoords = activeNote.getBoundingClientRect();
-            console.log("noteCoords.width " + noteCoords.width);
-            if (event.clientX > (workspaceParams.width - noteCoords.width) ) {
-                activeNote.style.left = (workspaceParams.width - noteCoords.width) + 'px';
+            var workspaceCoords = workspace.getBoundingClientRect();
+            if (event.clientX - workspaceCoords.x  > workspaceCoords.width - noteCoords.width) {
+                activeNote.style.left = (workspaceCoords.width - noteCoords.width) + 'px';
             } else {
-                activeNote.style.left = event.clientX + 'px';
+                activeNote.style.left = event.clientX - workspaceCoords.x + 'px';
+            };
+            if (event.clientX - workspaceCoords.x < 0) {
+                activeNote.style.left = '0px';
             };
 
-            if (event.clientY > (workspaceParams.height - noteCoords.height) ) {
-                activeNote.style.top = (workspaceParams.height - noteCoords.height) + 'px';
+            if (event.clientY - workspaceCoords.y > (workspaceCoords.height - noteCoords.height) ) {
+                activeNote.style.top = (workspaceCoords.height - noteCoords.height) + 'px';
             } else {
-                activeNote.style.top = event.clientY + 'px';
+                activeNote.style.top = event.clientY - workspaceCoords.y + 'px';
             };
-            if (event.clientY < 0) {
+            if (event.clientY - workspaceCoords.y < 0) {
                 activeNote.style.top = '0px';
             };
         };
