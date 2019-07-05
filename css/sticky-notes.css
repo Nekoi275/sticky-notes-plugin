@@ -36,6 +36,9 @@
   background-image: url("../icons/garbage.png");
   background-repeat: no-repeat;
 }
+.note .note-remove-button.hidden {
+  display: none;
+}
 .note .note-textarea {
   width: 100%;
   height: 100%;

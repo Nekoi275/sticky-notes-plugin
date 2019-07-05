@@ -26,30 +26,40 @@ function StickyNotes(addNoteButton, workspaceParams) {
         workspace.classList.add('notes-workspace');
         workspace.style.width = workspaceParams.width + 'px';
         workspace.style.height = workspaceParams.height + 'px';
-        
         workspaceParams.parent.appendChild(workspace);
+        if (typeof workspaceParams.removing === 'undefined' || workspaceParams.removing === null) {
+            workspaceParams.removing = true;
+        };
+        if (typeof workspaceParams.notesLimit === 'undefined' || workspaceParams.notesLimit === null) {
+            workspaceParams.notesLimit = 0;
+        };
     };
 
     function createNoteElement(noteStatus) {
-        var note = document.createElement('div');
-    
-        note.classList.add('note');
-        note.setAttribute('data-note-id', noteStatus.id);
-        note.innerHTML = '<a class="note-move-button"></a>' +
-                         '<a class="note-remove-button"></a>' +
-                         '<div class="note-textarea">' +
-                           '<textarea></textarea>' +
-                         '</div>';
-    
-        workspace.appendChild(note);
-        setNoteHandlers(note);
-        note.getElementsByTagName('textarea')[0].value = noteStatus.text;
-    
-        note.style.left = noteStatus.X + 'px';
-        note.style.top = noteStatus.Y  + 'px';
-        note.style.zIndex = noteStatus.Z;
-    
-        return note;
+        if ( localStorageGetNotes().length < workspaceParams.notesLimit || workspaceParams.notesLimit <= 0) {
+            var note = document.createElement('div');
+            note.classList.add('note');
+            note.setAttribute('data-note-id', noteStatus.id);
+            note.innerHTML = '<a class="note-move-button"></a>' +
+                            '<a class="note-remove-button"></a>' +
+                            '<div class="note-textarea">' +
+                            '<textarea></textarea>' +
+                            '</div>';
+            if (!workspaceParams.removing) {
+                note.getElementsByClassName('note-remove-button')[0].classList.add('hidden');
+            };
+
+            workspace.appendChild(note);
+        
+            setNoteHandlers(note);
+            
+            note.getElementsByTagName('textarea')[0].value = noteStatus.text;
+            note.style.left = noteStatus.X + 'px';
+            note.style.top = noteStatus.Y  + 'px';
+            note.style.zIndex = noteStatus.Z;
+        
+            return note;
+        };
     };
 
     function setNoteHandlers(note) {
@@ -141,8 +151,9 @@ function StickyNotes(addNoteButton, workspaceParams) {
             workspaceParams = {
                 width: document.documentElement.clientWidth,
                 height: document.documentElement.clientHeight,
-                left: 0,
-                top: 0
+                removing: true,
+                parent: document.body,
+                notesLimit: 0
             };
         };
         setWorkspace(workspaceParams);
@@ -187,9 +198,13 @@ function StickyNotes(addNoteButton, workspaceParams) {
 
         if (addNoteButton) {
             addNoteButton.addEventListener('click', function() {
-            var note = createNoteElement({id: ++noteId, Z: ++maxZIndex, text: ''});
-            var noteStatus = getNoteStatus(note);
-            localStorageSaveNote(noteStatus);
+                var note = createNoteElement({id: ++noteId, Z: ++maxZIndex, text: ''});
+                if (note) {
+                    var noteStatus = getNoteStatus(note);
+                    localStorageSaveNote(noteStatus);
+                } else {
+                    alert('notes limit reached');
+                };
             });
         };
     };
