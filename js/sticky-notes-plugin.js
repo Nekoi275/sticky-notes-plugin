@@ -21,8 +21,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
             removeNote(noteStatus.id);
 
         var note = createNoteElement(noteStatus);
-        if (note) 
-            localStorageSaveNote(noteStatus);
+        if (note) localStorageSaveNote(noteStatus);
     };
     
     function setWorkspace(workspaceParams) {
@@ -156,9 +155,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
 
     function mousemoveEventHandler(event) {
         if (activeNote) {
-            // document.body.style.cssText = '-moz-user-select: none;' +
-            //                               ' -webkit-user-select: none;' + 
-            //                               ' user-select: none';
+            document.body.classList.add('select-disabled');
             var noteCoords = activeNote.getBoundingClientRect();
             var workspaceCoords = workspace.getBoundingClientRect();
             if (event.clientX - workspaceCoords.x  > workspaceCoords.width - noteCoords.width) {
@@ -186,9 +183,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
             var noteStatus = getNoteStatus(activeNote);
             localStorageSaveNote(noteStatus);
             activeNote = null;
-            /* document.body.style.cssText = '-moz-user-select: auto;' +
-                                          ' -webkit-user-select: auto;' + 
-                                          ' user-select: auto'; */
+            document.body.classList.remove('select-disabled');
         };
     };
 
