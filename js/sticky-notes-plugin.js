@@ -14,12 +14,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
             noteStatus.Z = ++maxZIndex;
         if (!isDefined(noteStatus.text) )
             noteStatus.text = '';
-
-        if (!isDefined(noteStatus.id) ) 
-            noteStatus.id = ++noteId; 
-        else 
-            removeNote(noteStatus.id);
-
+        noteStatus.id = ++noteId; 
         var note = createNoteElement(noteStatus);
         if (note) localStorageSaveNote(noteStatus);
     };
