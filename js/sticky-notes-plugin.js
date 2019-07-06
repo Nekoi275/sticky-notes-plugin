@@ -23,8 +23,6 @@ function StickyNotes(addNoteButton, workspaceParams) {
         var note = createNoteElement(noteStatus);
         if (note) 
             localStorageSaveNote(noteStatus);
-        else 
-            alert('notes limit reached');
     };
     
     function setWorkspace(workspaceParams) {
@@ -161,7 +159,6 @@ function StickyNotes(addNoteButton, workspaceParams) {
             // document.body.style.cssText = '-moz-user-select: none;' +
             //                               ' -webkit-user-select: none;' + 
             //                               ' user-select: none';
-            //console.log("X=" + event.clientX + " Y=" + event.clientY);
             var noteCoords = activeNote.getBoundingClientRect();
             var workspaceCoords = workspace.getBoundingClientRect();
             if (event.clientX - workspaceCoords.x  > workspaceCoords.width - noteCoords.width) {
