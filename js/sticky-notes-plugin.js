@@ -5,7 +5,15 @@ function StickyNotes(addNoteButton, workspaceParams) {
     var workspace;
     var self = this;
 
-    init();
+    this.localStorageGetNotes = function() {
+        var notes = localStorage.getItem('notes');
+        if (notes) {
+            return JSON.parse(notes);
+        } else {
+            localStorage.setItem('notes', '[]');
+            return [];
+        };
+    };
     
     this.createNote = function(noteStatus) {
         if (!isDefined(noteStatus) ) 
@@ -18,7 +26,9 @@ function StickyNotes(addNoteButton, workspaceParams) {
         stayInsideWorkspace(noteStatus, note);
         if (note) localStorageSaveNote(noteStatus);
     };
-    
+
+    init();
+
     function setWorkspace(workspaceParams) {
         workspace = document.createElement('div');
         workspace.classList.add('notes-workspace');
@@ -98,7 +108,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
     };
     
     function localStorageSaveNote(noteStatus) {
-        var noteStatuses = localStorageGetNotes();
+        var noteStatuses = self.localStorageGetNotes();
         var index = noteStatuses.findIndex( function(elem) {return elem.id === noteStatus.id} );
     
         if (index >= 0) {
@@ -111,7 +121,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
     };
     
     function localStorageRemoveNote(noteId) {
-        var noteStatuses = localStorageGetNotes();
+        var noteStatuses = self.localStorageGetNotes();
         var index = noteStatuses.findIndex( function(elem) {return elem.id === noteId} );
         if (index >= 0) {
             noteStatuses.splice(index, 1);
@@ -119,18 +129,8 @@ function StickyNotes(addNoteButton, workspaceParams) {
         };
     };
     
-    function localStorageGetNotes() {
-        var notes = localStorage.getItem('notes');
-        if (notes) {
-            return JSON.parse(notes);
-        } else {
-            localStorage.setItem('notes', '[]');
-            return [];
-        };
-    };
-    
     function loadNotes() {
-        var notes = localStorageGetNotes();
+        var notes = self.localStorageGetNotes();
         notes.forEach( function(note) {createNoteElement(note)} );
         maxZIndex = notes.reduce( function(accumulator, value) {
             return (accumulator < value.Z) ? value.Z : accumulator
@@ -145,7 +145,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
     }
 
     function limitReached() {
-        return localStorageGetNotes().length >= workspaceParams.notesLimit && workspaceParams.notesLimit > 0;
+        return self.localStorageGetNotes().length >= workspaceParams.notesLimit && workspaceParams.notesLimit > 0;
     };
 
     function stayInsideWorkspace(noteStatus, note) {
