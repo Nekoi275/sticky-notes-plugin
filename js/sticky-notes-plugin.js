@@ -10,12 +10,12 @@ function StickyNotes(addNoteButton, workspaceParams) {
     this.createNote = function(noteStatus) {
         if (!isDefined(noteStatus) ) 
             noteStatus = {};
-        if (!isDefined(noteStatus.Z) )
-            noteStatus.Z = ++maxZIndex;
         if (!isDefined(noteStatus.text) )
             noteStatus.text = '';
+        noteStatus.Z = ++maxZIndex;
         noteStatus.id = ++noteId; 
         var note = createNoteElement(noteStatus);
+        stayInsideWorkspace(noteStatus, note);
         if (note) localStorageSaveNote(noteStatus);
     };
     
@@ -148,12 +148,23 @@ function StickyNotes(addNoteButton, workspaceParams) {
         return localStorageGetNotes().length >= workspaceParams.notesLimit && workspaceParams.notesLimit > 0;
     };
 
+    function stayInsideWorkspace(noteStatus, note) {
+        var workspaceCoords = workspace.getBoundingClientRect();
+        var noteCoords = note.getBoundingClientRect();
+        if (noteStatus.X > (workspaceCoords.width - noteCoords.width) ) 
+            note.style.left = (workspaceCoords.width - noteCoords.width) + 'px';
+        if (noteStatus.X < 0) note.style.left = '0px';
+        if (noteStatus.Y > (workspaceCoords.height - noteCoords.height) )
+            note.style.top = (workspaceCoords.height - noteCoords.height) + 'px';
+        if (noteStatus.Y < 0) note.style.top = '0px';
+    };
+
     function mousemoveEventHandler(event) {
         if (activeNote) {
             document.body.classList.add('select-disabled');
             var noteCoords = activeNote.getBoundingClientRect();
             var workspaceCoords = workspace.getBoundingClientRect();
-            if (event.clientX - workspaceCoords.x  > workspaceCoords.width - noteCoords.width) {
+            if ( (event.clientX - workspaceCoords.x)  > (workspaceCoords.width - noteCoords.width) ) {
                 activeNote.style.left = (workspaceCoords.width - noteCoords.width) + 'px';
             } else {
                 activeNote.style.left = event.clientX - workspaceCoords.x + 'px';
@@ -162,7 +173,7 @@ function StickyNotes(addNoteButton, workspaceParams) {
                 activeNote.style.left = '0px';
             };
 
-            if (event.clientY - workspaceCoords.y > (workspaceCoords.height - noteCoords.height) ) {
+            if ( (event.clientY - workspaceCoords.y) > (workspaceCoords.height - noteCoords.height) ) {
                 activeNote.style.top = (workspaceCoords.height - noteCoords.height) + 'px';
             } else {
                 activeNote.style.top = event.clientY - workspaceCoords.y + 'px';
