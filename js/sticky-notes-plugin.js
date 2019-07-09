@@ -20,10 +20,14 @@ function StickyNotes(addNoteButton, workspaceParams) {
             noteStatus = {};
         if (!isDefined(noteStatus.text) )
             noteStatus.text = '';
+        if (!isDefined(noteStatus.width) || noteStatus.width <= 0)
+            noteStatus.width = 300;
+        if (!isDefined(noteStatus.height) || noteStatus.height <= 0) 
+            noteStatus.height = 300;
         noteStatus.Z = ++maxZIndex;
         noteStatus.id = ++noteId; 
+        noteStatus = adjustNoteStatus(noteStatus);
         var note = createNoteElement(noteStatus);
-        stayInsideWorkspace(noteStatus, note);
         if (note) localStorageSaveNote(noteStatus);
     };
 
@@ -62,6 +66,8 @@ function StickyNotes(addNoteButton, workspaceParams) {
             note.style.left = noteStatus.X + 'px';
             note.style.top = noteStatus.Y  + 'px';
             note.style.zIndex = noteStatus.Z;
+            note.style.width = noteStatus.width + 'px';
+            note.style.height = noteStatus.height + 'px';
         
             return note;
         };
@@ -96,6 +102,8 @@ function StickyNotes(addNoteButton, workspaceParams) {
         noteStatus.Z = +note.style.zIndex;
         noteStatus.X = +note.style.left.slice(0, -2);
         noteStatus.Y = +note.style.top.slice(0, -2);
+        noteStatus.width = +note.style.width.slice(0, -2);
+        noteStatus.height = +note.style.height.slice(0, -2);
         return noteStatus;
     };
 
@@ -148,39 +156,33 @@ function StickyNotes(addNoteButton, workspaceParams) {
         return self.localStorageGetNotes().length >= workspaceParams.notesLimit && workspaceParams.notesLimit > 0;
     };
 
-    function stayInsideWorkspace(noteStatus, note) {
-        var workspaceCoords = workspace.getBoundingClientRect();
-        var noteCoords = note.getBoundingClientRect();
-        if (noteStatus.X > (workspaceCoords.width - noteCoords.width) ) 
-            note.style.left = (workspaceCoords.width - noteCoords.width) + 'px';
-        if (noteStatus.X < 0) note.style.left = '0px';
-        if (noteStatus.Y > (workspaceCoords.height - noteCoords.height) )
-            note.style.top = (workspaceCoords.height - noteCoords.height) + 'px';
-        if (noteStatus.Y < 0) note.style.top = '0px';
+    function adjustNoteStatus(noteStatus) {
+        var workspaceRect = workspace.getBoundingClientRect();
+        if (noteStatus.width > workspaceRect.width) 
+            noteStatus.width = workspaceRect.width;
+        if (noteStatus.height > workspaceRect.height)
+            noteStatus.height = workspaceRect.height;
+
+        if ( (noteStatus.X + noteStatus.width) > workspaceRect.width)
+            noteStatus.X = (workspaceRect.width - noteStatus.width);
+        if (noteStatus.X < 0) noteStatus.X = 0;
+        if ( (noteStatus.Y + noteStatus.height) > workspaceRect.height)
+            noteStatus.Y = (workspaceRect.height - noteStatus.height);
+        if (noteStatus.Y < 0) noteStatus.Y = 0;
+
+        return noteStatus;
     };
 
     function mousemoveEventHandler(event) {
         if (activeNote) {
             document.body.classList.add('select-disabled');
-            var noteCoords = activeNote.getBoundingClientRect();
-            var workspaceCoords = workspace.getBoundingClientRect();
-            if ( (event.clientX - workspaceCoords.x)  > (workspaceCoords.width - noteCoords.width) ) {
-                activeNote.style.left = (workspaceCoords.width - noteCoords.width) + 'px';
-            } else {
-                activeNote.style.left = event.clientX - workspaceCoords.x + 'px';
-            };
-            if (event.clientX - workspaceCoords.x < 0) {
-                activeNote.style.left = '0px';
-            };
-
-            if ( (event.clientY - workspaceCoords.y) > (workspaceCoords.height - noteCoords.height) ) {
-                activeNote.style.top = (workspaceCoords.height - noteCoords.height) + 'px';
-            } else {
-                activeNote.style.top = event.clientY - workspaceCoords.y + 'px';
-            };
-            if (event.clientY - workspaceCoords.y < 0) {
-                activeNote.style.top = '0px';
-            };
+            var noteStatus = getNoteStatus(activeNote);
+            var workspaceRect = workspace.getBoundingClientRect();
+            noteStatus.X = event.clientX - workspaceRect.x;
+            noteStatus.Y = event.clientY - workspaceRect.y;
+            noteStatus = adjustNoteStatus(noteStatus);
+            activeNote.style.left = noteStatus.X + 'px';
+            activeNote.style.top = noteStatus.Y + 'px';
         };
     };
 
